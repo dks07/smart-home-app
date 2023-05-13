@@ -1,0 +1,156 @@
+<div class="dashboard">
+  <header>
+    <div class="f fe">
+      <div class="heading">
+        <h5 class="date">{{currentDate | date}}</h5>
+      </div>
+      <button class="refresh" mat-icon-button color="primary" (click)="refreshData()">
+        <mat-icon>Refresh</mat-icon>
+      </button>
+    </div>
+
+    <div class="weather f">
+      <ng-container *ngIf="acs">
+        <ng-container *ngFor="let ac of acs">
+            <div>
+              <strong>{{ac.temperature}}°<sup>C</sup></strong>
+              <p>{{ac.location}} Indoor Temp.</p>
+            </div>
+            <div>
+              <strong>{{ac.humidity}}%</strong>
+              <p>{{ac.location}} Humidity</p>
+            </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+  </header>
+  <section>
+  <!-- Appliances -->
+    <div class="appliances">
+      <ng-container *ngIf="acs">
+        <ng-container *ngFor="let ac of acs">
+            <div class="appliance" [ngClass]="{'opened': ac.isOn, 'closed': !ac.isOn}">
+              <input type="checkbox" name="a" id="c">
+              <label for="c">
+                <i class="a"></i>
+                <strong>{{ac.name}}</strong>
+                <div class="padding">{{ac.location}}</div>
+                <div class="padding">Temperature {{ac.temperature}}°C</div>
+                <div class="padding">Humidity {{ac.humidity}}</div>
+                  <div class="padding"><span *ngIf="ac.isOn" data-c="opened" data-o="opened" ></span>
+                <span *ngIf="!ac.isOn" data-c="closed" data-o="closed" ></span></div>
+              </label>
+            </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="cameras">
+        <ng-container *ngFor="let camera of cameras">
+            <div class="appliance" [ngClass]="{'opened': camera.isOn, 'closed': !camera.isOn}">
+              <input type="checkbox" name="a" id="b">
+              <label for="b">
+                <i class="a"></i>
+                <strong>{{camera.name}}</strong>
+                <span>{{camera.location}} </span>
+
+                <div *ngIf="camera.isRecording" class="padding">Recording</div>
+                <div *ngIf="camera.isStreaming" class="padding">Streaming</div>
+                <div *ngIf="!camera.isRecording" class="padding">Not Recording</div>
+                <div *ngIf="!camera.isStreaming" class="padding">Not Streaming</div>
+                <div class="padding"><span *ngIf="camera.isOn" data-c="opened" data-o="opened" ></span>
+                <span *ngIf="!camera.isOn" data-c="closed" data-o="closed" ></span></div>
+
+              </label>
+            </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="lights">
+        <ng-container *ngFor="let light of lights">
+            <div class="appliance">
+              <input type="checkbox" name="a" id="a">
+              <label for="a">
+                <i class="l"></i>
+                <strong>{{light.name}}</strong>
+                <span>{{light.location}}</span>
+                <div class="padding">Color {{light.color}}</div>
+                <div class="padding">Brightness {{light.brightness}}</div>
+                <div class="padding"><span *ngIf="light.isOn" data-c="opened" data-o="opened" ></span>
+                <span *ngIf="!light.isOn" data-c="closed" data-o="closed" ></span></div>
+              </label>
+            </div>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="alarms">
+        <ng-container *ngFor="let alarm of alarms">
+            <div class="appliance" [ngClass]="{'opened': alarm.isOn, 'closed': !alarm.isOn}">
+              <input type="checkbox" name="a" id="d">
+              <label for="d">
+                <i class="f"></i>
+                <strong>{{alarm.name}}</strong>
+                <span>{{alarm.location}}</span>
+                <div *ngIf="alarm.isTriggered" class="padding">Alarm rriggered</div>
+                <div *ngIf="!alarm.isTriggered" class="padding">Alarm not triggered</div>
+                <div class="padding">Smoke level {{alarm.smokeLevel}}</div>
+                <div class="padding"><span *ngIf="alarm.isOn" data-c="opened" data-o="opened" ></span>
+                <span *ngIf="!alarm.isOn" data-c="closed" data-o="closed" ></span></div>
+              </label>
+            </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </section>
+</div>
+<div class="content">
+  <h4>Device history</h4>
+  <div class="row">
+    <div class="col-xs-6 col-6 col-md-4 form-group">
+      <!-- <input type="text"
+            class="form-control"
+            bsDatepicker [(ngModel)]="fromDate"> -->
+
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>From date</mat-label>
+      <input matInput [min]="minFromDate" [max]="maxFromDate" [matDatepicker]="frompicker" (dateInput)="fromDateChange('input', $event)"  [value]="this.minToDate">
+      <mat-datepicker-toggle matSuffix [for]="frompicker"></mat-datepicker-toggle>
+      <mat-datepicker #frompicker></mat-datepicker>
+    </mat-form-field>
+    </div>
+    <div class="col-xs-6 col-6 col-md-4 form-group">
+      <!-- <input type="text"
+            class="form-control"
+            #dp1="bsDatepicker"
+            bsDatepicker [(ngModel)]="toDate"> -->
+
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>To date</mat-label>
+              <input matInput [min]="minToDate" [max]="maxToDate" [matDatepicker]="topicker"
+              (dateInput)="toDateChange('input', $event)"  [value]="this.maxFromDate">
+              <mat-datepicker-toggle matSuffix [for]="topicker"></mat-datepicker-toggle>
+              <mat-datepicker #topicker></mat-datepicker>
+            </mat-form-field>
+
+    </div>
+
+    <br/>
+
+  </div>
+  <button mat-button mat-raised-button (click)="filterDate()">Filter</button>
+</div>
+<table style="width:100%">
+  <thead>
+    <tr>
+    <th>Device Id</th>
+    <th>Device Name</th>
+    <th>On Time</th>
+    <th>Usage (KW)</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let history of deviceHistories">
+      <td>{{history.deviceId}}</td>
+     <td>{{history.name}}</td>
+       <td>{{history.onTime| timespan}}</td>
+        <td>{{history.usage| number:'1.1-3'}}</td>
+    </tr>
+  </tbody>
+</table>
